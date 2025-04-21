@@ -22,43 +22,38 @@ app.get('/',(req,res)=>{
 })
 
 app.post("/chatAI", async (req, res) => {
-  // console.log('Received request body:', req.body);
-
   const userQuery = req.body?.UserQuery?.data;
   const oldMsg = req.body?.oldMsg?.data;
   const videoId = req.body?.videoID?.data;
 
-  //   console.log({
-  //     userQuery: userQuery,
-  //     oldMsg: oldMsg,
-  //     videoID: videoId,
-  //   });
+  try {
+    // Getting the transcript from the YouTube video
+    const transcriptData = await retrieveTranscript(videoId);
+    if (!transcriptData || !transcriptData.parsedTranscript) {
+      console.error("Transcript not found or failed to fetch");
+      return res.json({
+        transcript: "",
+        responseAI: "Unable to fetch transcript or video details.",
+      });
+    }
 
-  // Getting the transcript from the youtube video
+    const { parsedTranscript } = transcriptData;
 
-  const transcriptData = await retrieveTranscript(videoId);
-  if (!transcriptData) {
-    console.error("Transcript not found or failed to fetch");
-    return res.json({
+    // Generating the OpenAI Response
+    const responseAI = await chatbotAI(parsedTranscript, userQuery, oldMsg);
+
+    // Send the response with the transcript and AI response
+    res.json({
+      transcript: parsedTranscript,
+      responseAI: responseAI,
+    });
+  } catch (error) {
+    console.error("Error processing the request:", error);
+    res.status(500).json({
       transcript: "",
-      responseAI: "Unable to fetch transcript or video details.",
+      responseAI: "An error occurred while processing your request.",
     });
   }
-  const { parsedTranscript, metadata } = transcriptData;
-
-  // Generating the OpenAI Response
-
-  const responseAI = await chatbotAI(parsedTranscript, userQuery, oldMsg);
-  console.log(responseAI);
-
-  // Simulate AI response (for now just sending the parsed transcript)
-  //   const responseAI = parsedTranscript || "No transcript found for the video.";
-  res.json({
-    transcript: parsedTranscript,
-    responseAI: responseAI,
-  });
-
-  // Further logic for processing the request
 });
 
   

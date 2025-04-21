@@ -22,9 +22,10 @@ const chatbotAI = async (transcript,userQuery,oldMessages)=>{
   can help user to resolve his query. 
   -- Keep the conversation interesting and fun. 
   -- Don't disrespect. Be Friendly
+  -- your response should not be more than 100 words. Remember you are chatting with user Don't make him bore.
   `
   const completion = await client.chat.completions.create({
-    model: 'gpt-4o',
+    model: 'gpt-4',
     messages: [
       { role: 'system', content: system_prompt },
       { role: 'user', content: userQuery },
@@ -32,6 +33,7 @@ const chatbotAI = async (transcript,userQuery,oldMessages)=>{
   });
   
   console.log(completion.choices[0].message.content);
+  return completion.choices[0].message.content
 }
 
 export {chatbotAI}
