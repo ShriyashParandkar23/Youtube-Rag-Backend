@@ -51,6 +51,7 @@ async function retrieveTranscript(videoId) {
       .replace(/[\u200B-\u200D\uFEFF]/g, '')
       .replace(/\s+/g, ' ');
 
+    console.log(parsedTranscript)
     return { parsedTranscript, metadata };
   } catch (error) {
     console.error('Error while retrieving transcript:', error);
@@ -73,5 +74,7 @@ function compareTracks(track1, track2) {
   }
   return 0; // Preserve order if both have same priority
 }
+
+
 
 export { retrieveTranscript };

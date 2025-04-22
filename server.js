@@ -13,7 +13,7 @@ app.use(express.json());
 
 app.use(cors())
 
-
+retrieveTranscript('eDqfg_LexCQ')
 // testing route
 app.get('/',(req,res)=>{
     return res.json({
